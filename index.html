@@ -470,6 +470,44 @@
           entry.timestamp = getUnixTime();
           record.push(entry);
         }
+
+        function countCorrect(record) {
+            var total = 0;
+            var interval_end = 0;
+            var pressed = false;
+            var current_itype = null;
+            for (var i = 0; i < record.length; i++) {
+                var crecord = record[i];
+                var etype = crecord.event_type;
+                if (etype === "PRODUCT" || etype === "TARGET") { 
+                    current_itype = crecord.inverted;
+                    console.log(current_itype);
+                } else if (etype.startsWith("KEYPRESS") && current_itype != null) {
+                    pressed = true;
+                } else {
+                    if (!(current_itype == null)){
+                        if (current_itype === 1 && pressed) {
+                            total += 1; 
+                        } else if (current_itype === 0 && !pressed) {
+                            total += 1;
+                        }
+                    }
+                    current_itype = null;
+                    pressed = false;
+                }
+            }
+            return total;
+        }
+
+        function totalImages(record) {
+            var total = 0;
+            for(var i = 0; i < record.length; i++) {
+                if(record[i].event_type === "PRODUCT" || record[i].event_type === "TARGET") {
+                    total += 1;
+                }
+            }
+            return total;
+        } 
  
         // switches to the page specified by page_id
         function setPage(page_id) {
@@ -479,6 +517,10 @@
             page_dict[page_id].style.display = 'inline';
             curr_page = page_id;
             if (page_id == 'results' || page_id == 'restart') {
+              var num_correct = countCorrect(record);
+              var total = totalImages(record);
+              var prc = (num_correct/total * 100).toFixed(2);
+              page_dict[page_id].innerHTML += `<center>Accuracy: ${num_correct}/${total} (${prc}%)</center>`;
               page_dict[page_id].appendChild(
                  generate_record_table(record)
               );
