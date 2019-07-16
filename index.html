@@ -520,7 +520,8 @@
               var num_correct = countCorrect(record);
               var total = totalImages(record);
               var prc = (num_correct/total * 100).toFixed(2);
-              page_dict[page_id].innerHTML += `<center>Accuracy: ${num_correct}/${total} (${prc}%)</center>`;
+              var thingy = document.getElementById(page_id + "-accuracy");
+              thingy.innerHTML = `<center>Accuracy: ${num_correct}/${total} (${prc}%)</center>`;
               page_dict[page_id].appendChild(
                  generate_record_table(record)
               );
@@ -613,6 +614,7 @@
             <button id=export-button>Export Existing Data</button> 
             <button id=reset-button>Reset Experiment</button>
         </center>
+        <center id="restart-accuracy"></center>
     </div>
 
     <div class=main-div id=pause-div>
@@ -638,6 +640,7 @@
         <center>
           <button id=export-button-end>Export</button>
         </center>
+        <center id="results-accuracy"></center>
     </div>
 </body>
 </html>
